@@ -16,6 +16,21 @@ exports.checkID = (req, res, next, val) => {
 };
 
 /**
+ * Validate body content to ensure it contains name and price
+ * Returns 400 when the data is not present */
+exports.checkBody = (req, res, next) => {
+  const { name, price } = req.body;
+  if (!name || !price) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Missing required fields: name and price',
+    });
+  }
+
+  next();
+};
+
+/**
  * GET /api/v1/tours
  * Return all tours with metadata (request timestamp and count).
  */
@@ -51,9 +66,9 @@ exports.createTour = (req, res) => {
   const newId = tours[tours.length - 1].id + 1;
   const newTour = Object.assign({ id: newId }, req.body);
   tours.push(newTour);
-  fs.writeFile(TOURS, JSON.stringify(tours), (err) => {
-    if (err) console.log('Error:', err);
-  });
+  //   fs.writeFile(TOURS, JSON.stringify(tours), (err) => {
+  //     if (err) console.log('Error:', err);
+  //   });
   res.status(201).json({
     status: 'success',
     data: { tour: newTour },
