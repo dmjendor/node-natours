@@ -1,4 +1,5 @@
 const fs = require('fs');
+
 const USERS = `${__dirname}/../dev-data/data/users.json`;
 const users = JSON.parse(fs.readFileSync(USERS));
 
@@ -89,5 +90,3 @@ exports.deleteUserById = (req, res) => {
     data: null,
   });
 };
-
-exports;

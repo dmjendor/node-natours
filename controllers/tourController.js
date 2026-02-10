@@ -91,12 +91,10 @@ exports.updateTourById = (req, res) => {
  * Placeholder handler for deleting a tour by id.
  */
 exports.deleteTourById = (req, res) => {
-  const id = Number(req.params.id);
+  //   const id = Number(req.params.id);
 
   res.status(200).json({
     status: 'success',
     data: null,
   });
 };
-
-exports;

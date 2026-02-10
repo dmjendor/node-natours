@@ -1,5 +1,6 @@
 const express = require('express');
 const userController = require('../controllers/userController');
+
 const router = express.Router();
 
 // Validate `:id` params for all routes that include an id segment.
