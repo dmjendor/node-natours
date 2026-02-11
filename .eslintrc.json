@@ -3,6 +3,7 @@
   "plugins": ["prettier"],
   "rules": {
     "prettier/prettier": ["error", { "endOfLine": "auto" }],
+    "import/no-extraneous-dependencies": ["off", { "packageDir": ["./"] }],
     "spaced-comment": "off",
     "no-console": "warn",
     "prefer-object-spread": "off",
