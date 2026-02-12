@@ -1,100 +1,114 @@
-const fs = require('fs');
-
-const TOURS = `${__dirname}/../dev-data/data/tours-simple.json`;
-const tours = JSON.parse(fs.readFileSync(TOURS));
-
-/**
- * Validate `:id` route params before hitting id-based handlers.
- * Returns 404 when the id is outside the current in-memory tour range.
- */
-exports.checkID = (req, res, next, val) => {
-  const id = Number(req.params.id);
-  console.log(`TourId: ${val}`);
-  if (id > tours.length)
-    return res.status(404).json({ status: 'fail', message: 'Invalid ID' });
-  next();
-};
-
-/**
- * Validate body content to ensure it contains name and price
- * Returns 400 when the data is not present */
-exports.checkBody = (req, res, next) => {
-  const { name, price } = req.body;
-  if (!name || !price) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Missing required fields: name and price',
-    });
-  }
-
-  next();
-};
+const Tour = require('../models/tourModel');
 
 /**
  * GET /api/v1/tours
  * Return all tours with metadata (request timestamp and count).
  */
-exports.getAllTours = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    requestedAt: req.requestTime,
-    results: tours.length,
-    data: { tours },
-  });
+exports.getAllTours = async (req, res) => {
+  try {
+    const tours = await Tour.find();
+    res.status(200).json({
+      status: 'success',
+      requestedAt: req.requestTime,
+      results: tours.length,
+      data: { tours },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 400,
+      message: 'Unable to retrieve tours.',
+      error: error,
+    });
+  }
 };
 
 /**
  * GET /api/v1/tours/:id
- * Return a single tour matching the numeric id param.
+ * Return a single tour matching a MongoDB ObjectId.
  */
-exports.getTourById = (req, res) => {
-  const id = Number(req.params.id);
+exports.getTourById = async (req, res) => {
+  try {
+    const tour = await Tour.findById(req.params.id);
+    /// This is mongoose shorthand for
+    /// Tour.findONe({_id: req.params.id});
 
-  const tour = tours.find((el) => el.id === id);
-  res.status(200).json({
-    status: 'success',
-    data: { tour },
-  });
+    if (!tour) {
+      return res.status(404).json({
+        status: 'fail',
+        message: `No tour found with id ${req.params.id}.`,
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      requestedAt: req.requestTime,
+      data: { tour },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 400,
+      message: 'Unable to retrieve tour.',
+      error: error,
+    });
+  }
 };
 
 /**
  * POST /api/v1/tours
  * Create a new tour from request body and persist to the JSON data file.
  */
-exports.createTour = (req, res) => {
-  //   console.log(req.body);
-  const newId = tours[tours.length - 1].id + 1;
-  const newTour = Object.assign({ id: newId }, req.body);
-  tours.push(newTour);
-  //   fs.writeFile(TOURS, JSON.stringify(tours), (err) => {
-  //     if (err) console.log('Error:', err);
-  //   });
-  res.status(201).json({
-    status: 'success',
-    data: { tour: newTour },
-  });
+exports.createTour = async (req, res) => {
+  try {
+    const newTour = await Tour.create(req.body);
+    res.status(201).json({
+      status: 'success',
+      data: { tour: newTour },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 400,
+      message: 'Invalid data sent',
+    });
+  }
 };
 
 /**
  * PATCH /api/v1/tours/:id
  * Placeholder handler for partial updates.
  */
-exports.updateTourById = (req, res) => {
-  res.status(204).json({
-    status: 'success',
-    data: '<Updated Tour here...>',
-  });
+exports.updateTourById = async (req, res) => {
+  try {
+    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(201).json({
+      status: 'success',
+      data: { tour },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 400,
+      message: 'Unable to update tour',
+    });
+  }
 };
 
 /**
  * DELETE /api/v1/tours/:id
  * Placeholder handler for deleting a tour by id.
  */
-exports.deleteTourById = (req, res) => {
-  //   const id = Number(req.params.id);
-
-  res.status(200).json({
-    status: 'success',
-    data: null,
-  });
+exports.deleteTourById = async (req, res) => {
+  try {
+    await Tour.findByIdAndDelete(req.params.id);
+    res.status(201).json({
+      status: 'success',
+      data: null,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 400,
+      message: 'Unable to delete tour',
+    });
+  }
 };

@@ -4,7 +4,7 @@ const tourController = require('../controllers/tourController');
 const router = express.Router();
 
 // Validate `:id` params for all routes that include an id segment.
-router.param('id', tourController.checkID);
+// router.param('id', tourController.checkID);
 
 // Collection routes:
 // GET /api/v1/tours     -> list all tours
@@ -12,7 +12,7 @@ router.param('id', tourController.checkID);
 router
   .route('/')
   .get(tourController.getAllTours)
-  .post(tourController.checkBody, tourController.createTour);
+  .post(tourController.createTour);
 
 // Resource routes:
 // GET /api/v1/tours/:id    -> get one tour
