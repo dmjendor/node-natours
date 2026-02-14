@@ -1,58 +1,27 @@
 const Tour = require('../models/tourModel');
+const APIFeatures = require('../utils/apiFeatures');
 
+exports.aliasTopTours = (req, res, next) => {
+  req.query.limit = '5';
+  req.query.sort = '-ratingsAverage,price';
+  req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+  next();
+};
 /**
  * GET /api/v1/tours
  * Return all tours with metadata (request timestamp and count).
  */
 exports.getAllTours = async (req, res) => {
   try {
-    // BUILD QUERY
-    // 1a)  Filtering
-    const { page, limit, sort, fields, ...queryObj } = req.query;
-
-    // 1b) Advanced Filtering
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-
-    // 2) Build Query
-    let query = Tour.find(JSON.parse(queryStr));
-    console.log(req.query);
-
-    // 3) Sorting
-    if (sort) {
-      const sortBy = sort.split(',').join(' ');
-      query = query.sort(sortBy);
-    } else {
-      query = query.sort('-name');
-    }
-
-    // 4) Field Limiting
-    if (fields) {
-      const queryFields = fields.split(',').join(' ');
-      query = query.select(queryFields);
-    } else {
-      query = query.select('-__v');
-    }
-
-    // 5) Pagination
-    const pageNum = Number(page) || 1;
-    const limitNum = Number(limit) || 100;
-    const skip = (pageNum - 1) * limitNum;
-    query = query.skip(skip).limit(limitNum);
-
-    if (page) {
-      const numTours = await Tour.countDocuments();
-      if (skip > numTours) throw new Error('This page does not exist.');
-    }
-
     // EXECUTE QUERY
-    const tours = await query;
+    const features = new APIFeatures(Tour.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
 
-    // const tours = await Tour.find()
-    //   .where('duration')
-    //   .lte(5)
-    //   .where('difficulty')
-    //   .equals('easy');
+    const tours = await features.query;
+
     res.status(200).json({
       status: 'success',
       requestedAt: req.requestTime,
@@ -155,6 +124,96 @@ exports.deleteTourById = async (req, res) => {
     res.status(400).json({
       status: 400,
       message: 'Unable to delete tour',
+    });
+  }
+};
+
+exports.getTourStats = async (req, res) => {
+  try {
+    const stats = await Tour.aggregate([
+      {
+        $match: { ratingsAverage: { $gte: 4.5 } },
+      },
+      {
+        $group: {
+          _id: '$difficulty',
+          numTours: { $sum: 1 },
+          numRatings: { $sum: '$ratingsQuantity' },
+          avgRating: { $avg: '$ratingsAverage' },
+          avgPrice: { $avg: '$price' },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' },
+        },
+      },
+      {
+        $sort: { avgPrice: 1 },
+      },
+      // {
+      //   $match: { _id: { $ne: 'easy' } },
+      // },
+    ]);
+    res.status(201).json({
+      status: 'success',
+      data: stats,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 400,
+      message: 'Unable to get tour stats',
+    });
+  }
+};
+
+exports.getMonthlyPlan = async (req, res) => {
+  try {
+    // const year = Number(req.params.year);
+    const year = req.params.year * 1;
+    console.log('year', new Date(`${year}-01-01`));
+    const plan = await Tour.aggregate([
+      {
+        $unwind: '$startDates',
+      },
+      {
+        $match: {
+          $expr: {
+            $and: [
+              { $gte: [{ $toDate: '$startDates' }, new Date(`${year}-01-01`)] },
+              { $lte: [{ $toDate: '$startDates' }, new Date(`${year}-12-31`)] },
+            ],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: { $month: { $toDate: '$startDates' } },
+          numTourStarts: { $sum: 1 },
+          tours: { $push: '$name' },
+        },
+      },
+      {
+        $addFields: { month: '$_id' },
+      },
+      {
+        $project: {
+          _id: 0,
+        },
+      },
+      {
+        $sort: { numTourStarts: -1 },
+      },
+      {
+        $limit: 12,
+      },
+    ]);
+
+    res.status(201).json({
+      status: 'success',
+      data: plan,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 400,
+      message: 'Unable to get tour stats',
     });
   }
 };
