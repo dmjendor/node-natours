@@ -29,6 +29,7 @@ exports.getAllTours = async (req, res) => {
       data: { tours },
     });
   } catch (error) {
+    console.log('err', error);
     res.status(400).json({
       status: 400,
       message: 'Unable to retrieve tours.',

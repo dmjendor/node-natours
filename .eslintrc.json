@@ -7,6 +7,7 @@
     "spaced-comment": "off",
     "no-console": "warn",
     "prefer-object-spread": "off",
+    "prefer-arrow-callback": "off",
     "consistent-return": "off",
     "func-names": "off",
     "object-shorthand": "off",
