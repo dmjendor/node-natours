@@ -6,8 +6,9 @@ const userRouter = require('./routes/userRoutes');
 const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
+const nodeEnv = (process.env.NODE_ENV || '').trim().toLowerCase();
 
-if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+if (nodeEnv === 'development') app.use(morgan('dev'));
 
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
