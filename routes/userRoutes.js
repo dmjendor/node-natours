@@ -5,9 +5,7 @@ const authController = require('../controllers/authController');
 const router = express.Router();
 
 router.post('/signup', authController.signup);
-
-// Validate `:id` params for all routes that include an id segment.
-router.param('id', userController.checkID);
+router.post('/login', authController.login);
 
 // Collection routes:
 // GET /api/v1/users     -> list all users

@@ -1,92 +1,87 @@
-const fs = require('fs');
+const User = require('../models/userModel');
+const APIFeatures = require('../utils/apiFeatures');
+const AppError = require('../utils/appError');
+const catchAsync = require('../utils/catchAsync');
 
-const USERS = `${__dirname}/../dev-data/data/users.json`;
-const users = JSON.parse(fs.readFileSync(USERS));
+exports.getAllUsers = catchAsync(async (req, res, next) => {
+  // EXECUTE QUERY
+  const features = new APIFeatures(User.find(), req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
 
-/**
- * Validate `:id` route params before hitting id-based handlers.
- * Returns 404 when the id is outside the current in-memory user range.
- */
-exports.checkID = (req, res, next, val) => {
-  const id = Number(req.params.id);
-  console.log(`UserId: ${val}`);
-  if (id > users.length)
-    return res.status(404).json({ status: 'fail', message: 'Invalid ID' });
-  next();
-};
+  const users = await features.query;
 
-/**
- * GET /api/v1/users
- * Return all users with metadata (request timestamp and count).
- */
-exports.getAllUsers = (req, res) => {
   res.status(200).json({
     status: 'success',
     requestedAt: req.requestTime,
     results: users.length,
     data: { users },
   });
-};
+});
 
 /**
  * GET /api/v1/users/:id
- * Return a single user matching the numeric id param.
+ * Return a single user matching a MongoDB ObjectId.
  */
-exports.getUserById = (req, res) => {
-  const id = Number(req.params.id);
-  if (id > users.length)
-    return res.status(404).json({ status: 'fail', message: 'Invalid ID' });
-  const user = users.find((el) => el.id === id);
+exports.getUserById = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  /// This is mongoose shorthand for
+  /// User.findONe({_id: req.params.id});
+
+  if (!user) {
+    return next(new AppError('No user found with that ID', 404));
+  }
+
   res.status(200).json({
     status: 'success',
+    requestedAt: req.requestTime,
     data: { user },
   });
-};
+});
 
 /**
  * POST /api/v1/users
  * Create a new user from request body and persist to the JSON data file.
  */
-exports.createUser = (req, res) => {
-  //   console.log(req.body);
-  const newId = users[users.length - 1].id + 1;
-  const newUser = Object.assign({ id: newId }, req.body);
-  users.push(newUser);
-  fs.writeFile(USERS, JSON.stringify(users), (err) => {
-    if (err) console.log('Error:', err);
-  });
+exports.createUser = catchAsync(async (req, res, next) => {
+  const newUser = await User.create(req.body);
   res.status(201).json({
     status: 'success',
     data: { user: newUser },
   });
-};
+});
 
 /**
  * PATCH /api/v1/users/:id
  * Placeholder handler for partial updates.
  */
-exports.updateUserById = (req, res) => {
-  const id = Number(req.params.id);
-  if (id > users.length)
-    return res.status(404).json({ status: 'fail', message: 'Invalid ID' });
-
-  res.status(204).json({
-    status: 'success',
-    data: '<Updated User here...>',
+exports.updateUserById = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
   });
-};
+  if (!user) {
+    return next(new AppError('No user found with that ID', 404));
+  }
+  res.status(201).json({
+    status: 'success',
+    data: { user },
+  });
+});
 
 /**
  * DELETE /api/v1/users/:id
  * Placeholder handler for deleting a user by id.
  */
-exports.deleteUserById = (req, res) => {
-  const id = Number(req.params.id);
-  if (id > users.length)
-    return res.status(404).json({ status: 'fail', message: 'Invalid ID' });
-
-  res.status(200).json({
+exports.deleteUserById = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndDelete(req.params.id);
+  if (!user) {
+    return next(new AppError('No user found with that ID', 404));
+  }
+  res.status(201).json({
     status: 'success',
     data: null,
   });
-};
+});

@@ -31,11 +31,13 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
+    select: false,
     required: [true, 'A user must have a password'],
     minlength: 8,
   },
   passwordConfirm: {
     type: String,
+    select: false,
     validate: {
       // this only works on CREATE and SAVE
       validator: function (val) {
@@ -56,5 +58,14 @@ userSchema.pre('save', async function (next) {
   // Clear the confirm so it isn't saved to the database
   this.passwordConfirm = undefined;
 });
+
+userSchema.methods.checkPassword = async function (
+  enteredPassword,
+  userPassword
+) {
+  const pass = await bcrypt.compare(enteredPassword, userPassword);
+  console.log(enteredPassword, userPassword, pass);
+  return pass;
+};
 
 module.exports = mongoose.model('User', userSchema);

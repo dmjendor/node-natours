@@ -24,7 +24,7 @@ const server = app.listen(process.env.PORT, () => {
   console.log(`App running on port ${process.env.PORT}...`);
 });
 
-process.on('unhandledRejection', () => {
+process.on('unhandledRejection', (err) => {
   console.log('Unhandled Rejection.  Shutting down server.');
   console.log(err.name, err.message);
   server.close(() => {
