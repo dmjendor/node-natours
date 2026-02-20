@@ -47,6 +47,9 @@ const userSchema = new mongoose.Schema({
     },
     required: [true, 'You must confirm the entered password'],
   },
+  passwordChangedAt: {
+    type: Date,
+  },
 });
 
 userSchema.pre('save', async function (next) {
@@ -66,6 +69,17 @@ userSchema.methods.checkPassword = async function (
   const pass = await bcrypt.compare(enteredPassword, userPassword);
   console.log(enteredPassword, userPassword, pass);
   return pass;
+};
+
+userSchema.methods.changedPasswordAfter = async function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    return JWTTimestamp < changedTimestamp;
+  }
+  return false;
 };
 
 module.exports = mongoose.model('User', userSchema);
