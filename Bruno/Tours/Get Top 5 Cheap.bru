@@ -1,0 +1,16 @@
+meta {
+  name: Get Top 5 Cheap
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{URL}}api/v1/tours/top-5-cheap
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

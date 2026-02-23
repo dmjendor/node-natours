@@ -1,0 +1,20 @@
+meta {
+  name: Delete Tour
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{URL}}api/v1/tours/698cb2d2b40e5c4d2801ba6a
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{jwt}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

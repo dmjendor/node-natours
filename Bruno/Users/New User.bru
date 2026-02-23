@@ -1,0 +1,32 @@
+meta {
+  name: New User
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{URL}}api/v1/users/signup
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "name": "Lee Vaughan",
+      "email": "test1@gmail.com",
+      "password": "password123",
+      "passwordConfirm": "password123",
+      
+  }
+}
+
+tests {
+  const data = res.body;
+  
+  bru.setEnvVar("jwt", data.token);
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

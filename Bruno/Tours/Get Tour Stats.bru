@@ -1,0 +1,16 @@
+meta {
+  name: Get Tour Stats
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{URL}}api/v1/tours/tour-stats
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -87,11 +87,13 @@ exports.updateTourById = catchAsync(async (req, res, next) => {
  * Placeholder handler for deleting a tour by id.
  */
 exports.deleteTourById = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndDelete(req.params.id);
-  if (!tour) {
+  const result = await Tour.deleteOne({ _id: req.params.id });
+
+  if (result.deletedCount === 0) {
     return next(new AppError('No tour found with that ID', 404));
   }
-  res.status(201).json({
+
+  res.status(204).json({
     status: 'success',
     data: null,
   });

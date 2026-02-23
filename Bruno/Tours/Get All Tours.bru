@@ -1,0 +1,20 @@
+meta {
+  name: Get All Tours
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{URL}}api/v1/tours/
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{jwt}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

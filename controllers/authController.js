@@ -74,15 +74,15 @@ exports.protect = catchAsync(async (req, res, next) => {
   );
 
   // Check if user still exists
-  const freshUser = await User.findById(decodedToken.id);
-  if (!freshUser) {
+  const currentUser = await User.findById(decodedToken.id);
+  if (!currentUser) {
     return next(
       new AppError('The user belonging to the token does not exist.', 401)
     );
   }
 
   // Check if user changed password after the JWT was issued
-  if (freshUser.changedPasswordAfter(decodedToken.iat)) {
+  if (currentUser.changedPasswordAfter(decodedToken.iat)) {
     return next(
       new AppError(
         'User recently changed thier password!  Please log in again.',
@@ -91,6 +91,19 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
 
+  req.user = currentUser;
   // Grant access to protected route
   next();
 });
+
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    // roles ['admin','lead-guide'].  role='user'
+    if (!roles.includes(req.user.role))
+      next(
+        new AppError('You do not have permission to perform this action.', 403)
+      );
+
+    next();
+  };
+};

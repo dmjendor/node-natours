@@ -1,0 +1,24 @@
+meta {
+  name: Update Tour
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{URL}}api/v1/tours/5c88fa8cf4afda39709c2955
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{jwt}}
+}
+
+body:json {
+  {"price": 1001}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

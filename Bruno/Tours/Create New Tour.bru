@@ -1,0 +1,32 @@
+meta {
+  name: Create New Tour
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{URL}}api/v1/tours
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{jwt}}
+}
+
+body:json {
+  {
+    "name": "Delete me tour",
+    "price": 50,
+    "difficulty": "easy",
+    "duration": 5,
+  
+      "maxGroupSize": 12,
+      "secretTour": true
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
