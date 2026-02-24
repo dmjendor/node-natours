@@ -11,6 +11,12 @@ dotenv.config({ path: './config.env' });
 const app = require('./app');
 
 const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.PASSWORD);
+
+mongoose.set('bufferCommands', false);
+const server = app.listen(process.env.PORT, () => {
+  console.log(`App running on port ${process.env.PORT}...`);
+});
+
 mongoose
   .connect(DB, {
     useNewUrlParser: true,
@@ -18,16 +24,23 @@ mongoose
     useFindAndModify: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log('DB Connection Successful'));
-
-const server = app.listen(process.env.PORT, () => {
-  console.log(`App running on port ${process.env.PORT}...`);
-});
+  .then(() => {
+    console.log('DB Connection Successful');
+  })
+  .catch((err) => {
+    console.log('DB Connection Failed.');
+    console.log('TRY TURNING OFF VPN');
+    console.log(err.name, err.message);
+  });
 
 process.on('unhandledRejection', (err) => {
   console.log('Unhandled Rejection.  Shutting down server.');
   console.log(err.name, err.message);
-  server.close(() => {
+  if (server) {
+    server.close(() => {
+      process.exit(1);
+    });
+  } else {
     process.exit(1);
-  });
+  }
 });
