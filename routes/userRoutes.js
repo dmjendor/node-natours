@@ -8,7 +8,12 @@ router.post('/signup', authController.signup);
 router.post('/login', authController.login);
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
-
+router.patch(
+  '/updateMyPassword',
+  authController.protect,
+  authController.updatePassword
+);
+router.patch('/updateMe', authController.protect, userController.updateMe);
 // Collection routes:
 // GET /api/v1/users     -> list all users
 // POST /api/v1/users    -> create a new user

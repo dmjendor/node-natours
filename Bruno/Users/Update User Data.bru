@@ -1,0 +1,28 @@
+meta {
+  name: Update User Data
+  type: http
+  seq: 7
+}
+
+patch {
+  url: {{URL}}api/v1/users/updateMe
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{jwt}}
+}
+
+body:json {
+  {
+    "name": "Lee",
+    "role": "admin"
+  
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
