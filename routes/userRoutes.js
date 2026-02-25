@@ -14,6 +14,7 @@ router.patch(
   authController.updatePassword
 );
 router.patch('/updateMe', authController.protect, userController.updateMe);
+router.delete('/deleteMe', authController.protect, userController.deleteMe);
 // Collection routes:
 // GET /api/v1/users     -> list all users
 // POST /api/v1/users    -> create a new user

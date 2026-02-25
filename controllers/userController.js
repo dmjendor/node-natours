@@ -41,7 +41,6 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   // 2) Filter user fields that arent allowed to be updated
   const filteredBody = filterObj(req.body, 'name', 'email');
 
-  console.log(filteredBody);
   // 3) Update user document
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
@@ -56,6 +55,14 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user.id, { active: false });
+
+  res.status(200).json({
+    status: 'success',
+    data: null,
+  });
+});
 /**
  * GET /api/v1/users/:id
  * Return a single user matching a MongoDB ObjectId.
