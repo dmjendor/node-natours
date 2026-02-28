@@ -16,7 +16,12 @@ exports.aliasTopTours = (req, res, next) => {
  */
 exports.getAllTours = catchAsync(async (req, res, next) => {
   // EXECUTE QUERY
-  const features = new APIFeatures(Tour.find(), req.query)
+  const features = new APIFeatures(
+    // Populate does make an additional query to the database so can impact performance
+    Tour.find(),
+    req.query
+  )
+
     .filter()
     .sort()
     .limitFields()
