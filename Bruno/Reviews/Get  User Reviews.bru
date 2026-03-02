@@ -1,0 +1,16 @@
+meta {
+  name: Get  User Reviews
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{URL}}api/v1/reviews/user/5c8a245f2f8fb814b56fa191
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

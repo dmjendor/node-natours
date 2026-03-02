@@ -42,7 +42,7 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
  * Return a single tour matching a MongoDB ObjectId.
  */
 exports.getTourById = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id);
+  const tour = await Tour.findById(req.params.id).populate('reviews');
   /// This is mongoose shorthand for
   /// Tour.findONe({_id: req.params.id});
 

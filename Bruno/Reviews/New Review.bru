@@ -1,19 +1,21 @@
 meta {
-  name: Login
+  name: New Review
   type: http
-  seq: 3
+  seq: 9
 }
 
 post {
-  url: {{URL}}api/v1/users/login
+  url: {{URL}}api/v1/reviews
   body: json
   auth: inherit
 }
 
 body:json {
   {
-      "email": "dmjendor@gmail.com",
-      "password": "password12345"
+      "review": "Fun Time",
+      "rating": 5,
+      "tour": "5c88fa8cf4afda39709c2951",
+    "user": "5c8a24822f8fb814b56fa192"
   }
 }
 

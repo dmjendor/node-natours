@@ -1,0 +1,16 @@
+meta {
+  name: Get Tour Reviews
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{URL}}api/v1/reviews/tour/5c88fa8cf4afda39709c2951
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
