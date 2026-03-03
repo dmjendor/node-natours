@@ -1,21 +1,23 @@
 meta {
-  name: New Review
+  name: New Review on Tour
   type: http
   seq: 9
 }
 
 post {
-  url: {{URL}}api/v1/reviews
+  url: {{URL}}api/v1/tours/5c88fa8cf4afda39709c2951/reviews
   body: json
-  auth: inherit
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{jwt}}
 }
 
 body:json {
   {
-      "review": "Fun Time",
-      "rating": 5,
-      "tour": "5c88fa8cf4afda39709c2951",
-    "user": "5c8a24822f8fb814b56fa192"
+      "review": "Fun Time 2",
+      "rating": 4
   }
 }
 
