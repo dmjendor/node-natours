@@ -10,6 +10,7 @@ router
   .post(
     authController.protect,
     authController.restrictTo('user'),
+    reviewController.setTourUserIds,
     reviewController.createReview
   );
 
@@ -22,6 +23,12 @@ router.route('/tour/:tour').get(reviewController.getTourReviews);
 router.route('/user/:user').get(reviewController.getUserReviews);
 //   .patch(userController.updateUserById)
 //   .delete(userController.deleteUserById);
+
+router
+  .route('/:id')
+  .patch(reviewController.updateReviewById)
+  .delete(reviewController.deleteReviewById);
+// .get(reviewController.getReviewById)
 
 // router
 //   .route('/:tourId/reviews')

@@ -2,6 +2,7 @@ const Tour = require('../models/tourModel');
 const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const factory = require('./handlerFactory');
 
 exports.aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
@@ -61,48 +62,19 @@ exports.getTourById = catchAsync(async (req, res, next) => {
  * POST /api/v1/tours
  * Create a new tour from request body and persist to the JSON data file.
  */
-exports.createTour = catchAsync(async (req, res, next) => {
-  const newTour = await Tour.create(req.body);
-  res.status(201).json({
-    status: 'success',
-    data: { tour: newTour },
-  });
-});
+exports.createTour = factory.createOne(Tour);
 
 /**
  * PATCH /api/v1/tours/:id
  * Placeholder handler for partial updates.
  */
-exports.updateTourById = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404));
-  }
-  res.status(201).json({
-    status: 'success',
-    data: { tour },
-  });
-});
+exports.updateTourById = factory.updateOne(Tour);
 
 /**
  * DELETE /api/v1/tours/:id
  * Placeholder handler for deleting a tour by id.
  */
-exports.deleteTourById = catchAsync(async (req, res, next) => {
-  const result = await Tour.deleteOne({ _id: req.params.id });
-
-  if (result.deletedCount === 0) {
-    return next(new AppError('No tour found with that ID', 404));
-  }
-
-  res.status(204).json({
-    status: 'success',
-    data: null,
-  });
-});
+exports.deleteTourById = factory.deleteOne(Tour);
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([

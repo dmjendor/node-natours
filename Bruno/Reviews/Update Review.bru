@@ -1,17 +1,21 @@
 meta {
-  name: Delete User
+  name: Update Review
   type: http
-  seq: 11
+  seq: 3
 }
 
-delete {
-  url: {{URL}}api/v1/users/dafu90aur
+put {
+  url: {{URL}}api/v1/reviews/fsdaf
   body: json
   auth: bearer
 }
 
 auth:bearer {
   token: {{jwt}}
+}
+
+body:json {
+  {"price": 1001}
 }
 
 settings {

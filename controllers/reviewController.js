@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Review = require('../models/reviewModel');
 // const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const factory = require('./handlerFactory');
 
 exports.getAllReviews = catchAsync(async (req, res, next) => {
   let filter = {};
@@ -70,18 +71,18 @@ exports.getUserReviews = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.setTourUserIds = (req, res, next) => {
+  // Allow nested routes
+  if (!req.body.tour) req.body.tour = req.params.tourId;
+  if (!req.body.user) req.body.user = req.user.id;
+  next();
+};
+
 /**
  * POST /api/v1/reviews
  * Create a new review from request body and persist to the JSON data file.
  */
-exports.createReview = catchAsync(async (req, res, next) => {
-  // Allow nested routes
-  if (!req.body.tour) req.body.tour = req.params.tourId;
-  if (!req.body.user) req.body.user = req.user.id;
+exports.createReview = factory.createOne(Review);
 
-  const newReview = await Review.create(req.body);
-  res.status(201).json({
-    status: 'success',
-    data: { user: newReview },
-  });
-});
+exports.updateReviewById = factory.updateOne(Review);
+exports.deleteReviewById = factory.deleteOne(Review);

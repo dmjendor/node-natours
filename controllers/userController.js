@@ -2,6 +2,7 @@ const User = require('../models/userModel');
 const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
+const factory = require('./handlerFactory');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -87,43 +88,17 @@ exports.getUserById = catchAsync(async (req, res, next) => {
  * POST /api/v1/users
  * Create a new user from request body and persist to the JSON data file.
  */
-exports.createUser = catchAsync(async (req, res, next) => {
-  const newUser = await User.create(req.body);
-  res.status(201).json({
-    status: 'success',
-    data: { user: newUser },
-  });
-});
+exports.createUser = factory.createOne(User);
 
 /**
  * PATCH /api/v1/users/:id
  * Placeholder handler for partial updates.
+ * Do NOT udpate passwords with this
  */
-exports.updateUserById = catchAsync(async (req, res, next) => {
-  const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  if (!user) {
-    return next(new AppError('No user found with that ID', 404));
-  }
-  res.status(201).json({
-    status: 'success',
-    data: { user },
-  });
-});
+exports.updateUserById = factory.updateOne(User);
 
 /**
  * DELETE /api/v1/users/:id
  * Placeholder handler for deleting a user by id.
  */
-exports.deleteUserById = catchAsync(async (req, res, next) => {
-  const user = await User.findByIdAndDelete(req.params.id);
-  if (!user) {
-    return next(new AppError('No user found with that ID', 404));
-  }
-  res.status(201).json({
-    status: 'success',
-    data: null,
-  });
-});
+exports.deleteUserById = factory.deleteOne(User);
