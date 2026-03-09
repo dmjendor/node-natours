@@ -13,7 +13,13 @@ router
   .get(tourController.aliasTopTours, tourController.getAllTours);
 
 router.route('/tour-stats').get(tourController.getTourStats);
-router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
+router
+  .route('/monthly-plan/:year')
+  .get(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide', 'guide'),
+    tourController.getMonthlyPlan
+  );
 // Validate `:id` params for all routes that include an id segment.
 // router.param('id', tourController.checkID);
 
@@ -22,8 +28,12 @@ router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
 // POST /api/v1/tours    -> create a new tour
 router
   .route('/')
-  .get(authController.protect, tourController.getAllTours)
-  .post(tourController.createTour);
+  .get(tourController.getAllTours)
+  .post(
+    authController.protect,
+    authController.restrictTo('lead-guide', 'admin'),
+    tourController.createTour
+  );
 
 // Resource routes:
 // GET /api/v1/tours/:id    -> get one tour
@@ -32,7 +42,11 @@ router
 router
   .route('/:id')
   .get(tourController.getTourById)
-  .patch(tourController.updateTourById)
+  .patch(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourController.updateTourById
+  )
   .delete(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
