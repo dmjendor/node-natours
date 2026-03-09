@@ -1,22 +1,19 @@
 meta {
-  name: New User
+  name: Login -user
   type: http
-  seq: 6
+  seq: 5
 }
 
 post {
-  url: {{URL}}api/v1/users/signup
+  url: {{URL}}api/v1/users/login
   body: json
   auth: inherit
 }
 
 body:json {
   {
-      "name": "Lee Vaughan",
       "email": "test1@gmail.com",
-      "password": "password12345",
-      "passwordConfirm": "password12345",
-  "role": "user"
+      "password": "password12345"
   }
 }
 

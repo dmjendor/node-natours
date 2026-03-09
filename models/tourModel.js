@@ -146,7 +146,12 @@ tourSchema.post('save', function (doc, next) {
 // Query Middleware
 // tourSchema.pre('find', function (next) {
 tourSchema.pre(/^find/, function (next) {
-  this.find({ secretTour: { $ne: true } });
+  const currentFilter = this.getFilter();
+  const isLookupById = Boolean(currentFilter && currentFilter._id);
+
+  if (!isLookupById) {
+    this.find({ secretTour: { $ne: true } });
+  }
 
   this.start = Date.now();
   next();

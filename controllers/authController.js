@@ -74,7 +74,11 @@ exports.protect = catchAsync(async (req, res, next) => {
     token = req.headers.authorization.split(' ')[1];
   }
 
-  if (!token) {
+  if (token) {
+    token = token.trim().replace(/^['"]|['"]$/g, '');
+  }
+
+  if (!token || token === 'undefined' || token === 'null') {
     return next(
       new AppError('Invalid user session! Please log in for access.', 401)
     );
