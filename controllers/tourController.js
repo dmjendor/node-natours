@@ -1,6 +1,4 @@
 const Tour = require('../models/tourModel');
-const APIFeatures = require('../utils/apiFeatures');
-const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 
@@ -15,48 +13,13 @@ exports.aliasTopTours = (req, res, next) => {
  * GET /api/v1/tours
  * Return all tours with metadata (request timestamp and count).
  */
-exports.getAllTours = catchAsync(async (req, res, next) => {
-  // EXECUTE QUERY
-  const features = new APIFeatures(
-    // Populate does make an additional query to the database so can impact performance
-    Tour.find(),
-    req.query
-  )
-
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-
-  const tours = await features.query;
-
-  res.status(200).json({
-    status: 'success',
-    requestedAt: req.requestTime,
-    results: tours.length,
-    data: { tours },
-  });
-});
+exports.getAllTours = factory.getAll(Tour);
 
 /**
  * GET /api/v1/tours/:id
  * Return a single tour matching a MongoDB ObjectId.
  */
-exports.getTourById = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id).populate('reviews');
-  /// This is mongoose shorthand for
-  /// Tour.findONe({_id: req.params.id});
-
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    requestedAt: req.requestTime,
-    data: { tour },
-  });
-});
+exports.getTourById = factory.getOne(Tour, { path: 'reviews' });
 
 /**
  * POST /api/v1/tours
