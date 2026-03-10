@@ -20,6 +20,10 @@ router
 router
   .route('/:id')
   .get(reviewController.getReviewById)
+  .put(
+    authController.restrictTo('user', 'admin'),
+    reviewController.updateReviewById
+  )
   .patch(
     authController.restrictTo('user', 'admin'),
     reviewController.updateReviewById

@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: {{URL}}api/v1/reviews/5c8a385614eb5c17645c9118
+  url: {{URL}}api/v1/reviews/69a6cd4f18def73ae900246f
   body: none
-  auth: inherit
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{jwt}}
 }
 
 settings {

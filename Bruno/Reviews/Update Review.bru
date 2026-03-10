@@ -4,8 +4,8 @@ meta {
   seq: 3
 }
 
-put {
-  url: {{URL}}api/v1/reviews/fsdaf
+patch {
+  url: {{URL}}api/v1/reviews/69a6cd4f18def73ae900246f
   body: json
   auth: bearer
 }
@@ -15,7 +15,7 @@ auth:bearer {
 }
 
 body:json {
-  {"price": 1001}
+  {"rating": 1}
 }
 
 settings {
