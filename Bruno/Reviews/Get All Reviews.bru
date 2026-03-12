@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: {{URL}}api/v1/reviews
+  url: {{URL}}api/v1/reviews?user=69a6cd4a18def73ae900246c
   body: none
   auth: bearer
+}
+
+params:query {
+  user: 69a6cd4a18def73ae900246c
 }
 
 auth:bearer {

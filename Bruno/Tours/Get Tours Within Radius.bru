@@ -1,0 +1,16 @@
+meta {
+  name: Get Tours Within Radius
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{URL}}api/v1/tours/tours-within/400/center/34.111745,-118.113491/unit/mi
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
