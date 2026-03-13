@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Natours API Docs</title>
+    <link rel="stylesheet" href="./css/docs.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">
+          <p class="eyebrow">Natours</p>
+          <h1>API Docs</h1>
+          <p class="muted">Local documentation for the routes served by this app.</p>
+        </div>
+
+        <div class="server-card">
+          <span class="label">Base URL</span>
+          <code id="base-url"></code>
+        </div>
+
+        <label class="search-wrap" for="endpoint-search">
+          <span class="label">Search endpoints</span>
+          <input id="endpoint-search" type="search" placeholder="GET /tours" />
+        </label>
+
+        <nav id="sidebar-nav" class="nav"></nav>
+      </aside>
+
+      <main class="content">
+        <section class="hero">
+          <div>
+            <p class="eyebrow">Overview</p>
+            <h2>Run the API locally and use these routes directly</h2>
+            <p class="muted">
+              Static assets are served from the <code>public</code> folder. This page no
+              longer depends on a remote viewer or hosted documentation app.
+            </p>
+          </div>
+          <div class="hero-meta">
+            <div class="meta-card">
+              <span class="label">Auth</span>
+              <p>Bearer JWT for protected routes</p>
+            </div>
+            <div class="meta-card">
+              <span class="label">Formats</span>
+              <p>JSON request and response bodies</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="quickstart">
+          <h3>Quick Start</h3>
+          <div class="code-panel">
+            <button class="copy-button" data-copy-target="quickstart-code" type="button">
+              Copy
+            </button>
+            <pre id="quickstart-code"></pre>
+          </div>
+        </section>
+
+        <section class="notes">
+          <div class="note">
+            <strong>Protected routes:</strong> login or signup first, then send
+            <code>Authorization: Bearer &lt;jwt&gt;</code>.
+          </div>
+          <div class="note">
+            <strong>Nested reviews:</strong> use
+            <code>/api/v1/tours/:tourId/reviews</code> to list or create reviews for one
+            tour.
+          </div>
+        </section>
+
+        <section id="endpoint-list" class="endpoint-list"></section>
+      </main>
+    </div>
+
+    <script src="./js/docs.js"></script>
+  </body>
+</html>
