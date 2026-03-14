@@ -1,3 +1,5 @@
+/* eslint-env browser */
+
 (function () {
   const apiBase = `${window.location.origin}/api/v1`;
 
@@ -91,7 +93,8 @@
           path: '/tours/tour-stats',
           title: 'Tour Stats',
           auth: 'Public',
-          description: 'Aggregation endpoint for tour rating and price metrics.',
+          description:
+            'Aggregation endpoint for tour rating and price metrics.',
           params: [],
           sampleBody: null,
           responses: ['201 success', 'data array'],
@@ -208,7 +211,8 @@
           path: '/users/updateMyPassword',
           title: 'Update Current Password',
           auth: 'JWT',
-          description: 'Changes the logged-in user password and returns a new JWT.',
+          description:
+            'Changes the logged-in user password and returns a new JWT.',
           params: ['Header: Authorization Bearer <jwt>'],
           sampleBody: {
             passwordCurrent: 'password1234',
@@ -414,6 +418,13 @@
       .join('');
   }
 
+  function escapeHtml(value) {
+    return value
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;');
+  }
+
   function renderEndpoints(filteredGroups) {
     const cards = filteredGroups
       .flatMap((group) => group.endpoints)
@@ -432,18 +443,20 @@
               <div>
                 <p>${endpoint.description}</p>
                 <div class="field-list">
-                  ${endpoint.params.length
-                    ? endpoint.params
-                        .map(
-                          (param) => `
+                  ${
+                    endpoint.params.length
+                      ? endpoint.params
+                          .map(
+                            (param) => `
                             <div class="field">
                               <strong>Parameter</strong>
                               <span>${param}</span>
                             </div>
                           `
-                        )
-                        .join('')
-                    : '<div class="field"><strong>Parameters</strong><span>None</span></div>'}
+                          )
+                          .join('')
+                      : '<div class="field"><strong>Parameters</strong><span>None</span></div>'
+                  }
                   ${
                     endpoint.sampleBody
                       ? `
@@ -484,13 +497,6 @@
     endpointList.innerHTML = cards.length
       ? cards.join('')
       : '<div class="empty-state">No endpoints match that search.</div>';
-  }
-
-  function escapeHtml(value) {
-    return value
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;');
   }
 
   function filterGroups(term) {

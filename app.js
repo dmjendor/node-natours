@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -15,7 +16,13 @@ const globalErrorHandler = require('./controllers/errorController');
 const app = express();
 const nodeEnv = (process.env.NODE_ENV || '').trim().toLowerCase();
 
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
 // GLOBAL MIDDLEWARE
+// Serving static files
+app.use(express.static(path.join(__dirname, '/public')));
+
 // Set security HTTP headers
 app.use(helmet());
 
@@ -54,14 +61,18 @@ app.use(
   })
 );
 
-// Serving static files
-app.use(express.static(`${__dirname}/public`));
-
 // Test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
 
   next(); // always use next in middleware
+});
+
+app.get('/', (req, res) => {
+  res.status(200).render('base', {
+    tour: 'Flibbertygibbit',
+    user: 'Funky Rhymes',
+  });
 });
 
 app.use('/api/v1/tours', tourRouter);
