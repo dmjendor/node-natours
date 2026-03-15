@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 
 const AppError = require('./utils/appError');
+const viewRouter = require('./routes/viewRoutes');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
@@ -68,13 +69,7 @@ app.use((req, res, next) => {
   next(); // always use next in middleware
 });
 
-app.get('/', (req, res) => {
-  res.status(200).render('base', {
-    tour: 'Flibbertygibbit',
-    user: 'Funky Rhymes',
-  });
-});
-
+app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);

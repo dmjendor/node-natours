@@ -1,15 +1,18 @@
 doctype html
-html 
-    head 
-        title Natours | #{tour}
-        link(href='css/style.css' rel='stylesheet')
-        link(rel='shortcut icon' type='image/png' href='img/favicon.png')
-    body 
-        h1= tour
-        h2= user.toUpperCase()
-        // HTML VISIBLE COMMENT
-        //- HTML INVISIBLE COMMENT
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    link(href='https://fonts.googleapis.com/css?family=Lato:300,300i,700' rel='stylesheet')
+    link(rel='stylesheet' href='/css/style.css')
+    link(rel='shortcut icon' type='image/png' href='/img/favicon.png')
+    block head
+    title Natours | #{title}
+  body
+    block header
+      include _header
 
-        - const x = 9;
-        h2= 2*x
-        p this is just some text
+    block content
+
+    block footer
+      include _footer

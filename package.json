@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon server.js",
     "start:prod": "set NODE_ENV=production && nodemon server.js",
-    "debug": "ndb server.js"
+    "debug": "ndb server.js",
+    "slugify:tours": "node dev-data/data/update-tour-slugs.js"
   },
   "author": "Lee Vaughan",
   "license": "ISC",
