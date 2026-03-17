@@ -44,7 +44,9 @@ if (mapElement) {
       closeOnClick: false,
     })
       .setLngLat(marker.geometry.coordinates)
-      .setHTML('<p>' + marker.properties.description + '</p>')
+      .setHTML(
+        `<p>Day ${marker.properties.day}: ${marker.properties.description}</p>`
+      )
       .addTo(map);
 
     bounds.extend(marker.geometry.coordinates);

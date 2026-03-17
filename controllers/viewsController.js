@@ -25,7 +25,6 @@ exports.getTour = catchAsync(async (req, res, next) => {
     },
   });
 
-  console.log(tour);
   if (!tour) {
     return next(new AppError('Please provide a valid tour slug', 400));
   }
@@ -38,3 +37,10 @@ exports.getTour = catchAsync(async (req, res, next) => {
     mapboxToken: process.env.MAP_KEY,
   });
 });
+
+exports.getLoginForm = (req, res) => {
+  // get all the tour data from the collection
+  res.status(200).render('login', {
+    title: 'Login',
+  });
+};
