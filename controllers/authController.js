@@ -64,6 +64,14 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user._id, 200, res);
 });
 
+exports.logout = (req, res) => {
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({ status: 'success' });
+};
+
 exports.protect = catchAsync(async (req, res, next) => {
   // Verify existance of token and retrieve
   let token;
@@ -116,32 +124,36 @@ exports.protect = catchAsync(async (req, res, next) => {
 });
 
 // only for rendered pages, no errors!
-exports.isLoggedIn = catchAsync(async (req, res, next) => {
+exports.isLoggedIn = async (req, res, next) => {
   // Verify existance of token and retrieve
   if (req.cookies.jwt) {
-    // Verify token is valid
-    const decodedToken = await promisify(jwt.verify)(
-      req.cookies.jwt,
-      process.env.JWT_SECRET
-    );
+    try {
+      // Verify token is valid
+      const decodedToken = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET
+      );
 
-    // Check if user still exists
-    const currentUser = await User.findById(decodedToken.id);
-    if (!currentUser) {
+      // Check if user still exists
+      const currentUser = await User.findById(decodedToken.id);
+      if (!currentUser) {
+        return next();
+      }
+
+      // Check if user changed password after the JWT was issued
+      if (currentUser.changedPasswordAfter(decodedToken.iat)) {
+        return next();
+      }
+
+      // Grant access to protected route
+      res.locals.user = currentUser;
+      return next();
+    } catch (error) {
       return next();
     }
-
-    // Check if user changed password after the JWT was issued
-    if (currentUser.changedPasswordAfter(decodedToken.iat)) {
-      return next();
-    }
-
-    // Grant access to protected route
-    res.locals.user = currentUser;
-    return next();
   }
   next();
-});
+};
 
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {

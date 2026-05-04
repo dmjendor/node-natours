@@ -28,32 +28,55 @@ const handleJWTExpiredError = () => {
   return new AppError('Your token has expired. Please log in again!', 401);
 };
 
-const sendDevError = (err, res) => {
-  res.status(err.statusCode).json({
-    status: err.status,
-    error: err,
-    message: err.message,
-    stack: err.stack,
+const sendDevError = (err, req, res) => {
+  if (req.originalUrl.startsWith('/api')) {
+    // API
+    return res.status(err.statusCode).json({
+      status: err.status,
+      error: err,
+      message: err.message,
+      stack: err.stack,
+    });
+  }
+  // RENDERED WEBSITE
+  return res.status(err.statusCode).render('error', {
+    title: 'Something went wrong.',
+    msg: err.message,
   });
 };
 
-const sendProdError = (err, res) => {
+const sendProdError = (err, req, res) => {
+  if (req.originalUrl.startsWith('/api')) {
+    // API
+    // Operational, trusted error; send message to client
+    if (err.isOperational) {
+      res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+      });
+    } else {
+      // Programming or other unknown error: don't leak error details
+      // 1)  Send generic error
+      res.status(500).json({
+        status: 'errror',
+        message: 'Something went wrong.',
+      });
+    }
+  }
+  // RENDERED WEBSITE
   // Operational, trusted error; send message to client
   if (err.isOperational) {
-    res.status(err.statusCode).json({
+    return res.status(err.statusCode).json({
       status: err.status,
       message: err.message,
     });
-  } else {
-    // Programming or other unknown error: don't leak error details
-    // 1) Log Error
-    console.error('💥ERROR💥: ', err);
-    // 2) Send generic error
-    res.status(500).json({
-      status: 'errror',
-      message: 'Something went wrong.',
-    });
   }
+  // Programming or other unknown error: don't leak error details
+  // 1) Send generic error
+  return res.status(err.statusCode).render('error', {
+    title: 'Something went wrong.',
+    msg: 'Please try again later.',
+  });
 };
 
 module.exports = (err, req, res, next) => {
@@ -63,7 +86,7 @@ module.exports = (err, req, res, next) => {
   const nodeEnv = (process.env.NODE_ENV || '').trim().toLowerCase();
 
   if (nodeEnv === 'development') {
-    sendDevError(err, res);
+    sendDevError(err, req, res);
   } else if (nodeEnv === 'production') {
     let error = { ...err };
     error.name = err.name;
@@ -75,6 +98,6 @@ module.exports = (err, req, res, next) => {
     if (error.name === 'JsonWebTokenError') error = handleJWTError();
     if (error.name === 'TokenExpiredError') error = handleJWTExpiredError();
 
-    sendProdError(error, res);
+    sendProdError(error, req, res);
   }
 };

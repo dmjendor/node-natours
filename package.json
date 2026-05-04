@@ -7,11 +7,15 @@
     "start": "nodemon server.js",
     "start:prod": "set NODE_ENV=production && nodemon server.js",
     "debug": "ndb server.js",
-    "slugify:tours": "node dev-data/data/update-tour-slugs.js"
+    "slugify:tours": "node dev-data/data/update-tour-slugs.js",
+    "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
+    "build:js": "parcel build ./public/js/index.js --out-dir ./public/js --out-file bundle.js"
   },
   "author": "Lee Vaughan",
   "license": "ISC",
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "axios": "^1.16.0",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.4",
@@ -39,6 +43,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.5.5",
     "eslint-plugin-react": "^7.37.5",
+    "parcel-bundler": "^1.12.5",
     "prettier": "^3.8.1"
   },
   "engines": {

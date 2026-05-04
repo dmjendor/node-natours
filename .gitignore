@@ -18,6 +18,7 @@ pids/
 coverage/
 dist/
 build/
+.cache/
 
 # Environment variables
 .env
