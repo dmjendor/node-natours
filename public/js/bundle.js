@@ -13655,13 +13655,12 @@ if (loginForm) {
 if (logOutButton) logOutButton.addEventListener('click', _login.logout);
 if (userDataForm) userDataForm.addEventListener('submit', function (e) {
   e.preventDefault();
-  // VALUES
-  var name = document.getElementById('name').value;
-  var email = document.getElementById('email').value;
-  (0, _updateSettings.updateData)({
-    name: name,
-    email: email
-  }, 'data');
+  var form = new FormData();
+  var photo = document.getElementById('photo').files[0];
+  form.append('name', document.getElementById('name').value);
+  form.append('email', document.getElementById('email').value);
+  if (photo) form.append('photo', photo);
+  (0, _updateSettings.updateData)(form, 'data');
 });
 if (userPasswordForm) userPasswordForm.addEventListener('submit', /*#__PURE__*/function () {
   var _ref = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(e) {
